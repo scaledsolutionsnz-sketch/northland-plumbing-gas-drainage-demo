@@ -1,0 +1,21 @@
+# Northland Plumbing, Gas & Drainage
+
+> Whangārei plumbers, gasfitters and certified drainlayers working across Northland, New Zealand.
+
+- Phone: 0800 WANT GAS (0800 926 8427); water delivery 0800 WANT H2O (0800 926 8426); office 09 430 0669
+- Email: info@northlandpg.co.nz
+- Address: 140 Lower Dent Street, Whangārei 0110
+- Hours: Monday to Friday 8am to 4.30pm
+- Google rating: 4.5 from 77 reviews
+
+## Services
+- [Plumbing](https://northland-plumbing-gas-drainage-demo.vercel.app/services/plumbing.html): New homes, renovations, leaks, blocked drains and fit-offs, done by qualified plumbers.
+- [Gas fitting](https://northland-plumbing-gas-drainage-demo.vercel.app/services/gas-fitting.html): Gas hobs, califonts, heating and full commercial kitchen fit-outs, certified and signed off.
+- [Hot water](https://northland-plumbing-gas-drainage-demo.vercel.app/services/hot-water.html): Gas califonts, electric cylinders, mains pressure upgrades and wet-backs. Supplied, installed, certified.
+- [Drainlaying](https://northland-plumbing-gas-drainage-demo.vercel.app/services/drainlaying.html): Certified drainlayers for new homes, subdivisions, commercial sites and stubborn blocked drains.
+- [Wastewater systems](https://northland-plumbing-gas-drainage-demo.vercel.app/services/wastewater.html): Septic tanks and treatment systems designed for your site, from consent report to commissioning.
+- [Excavation & earthworks](https://northland-plumbing-gas-drainage-demo.vercel.app/services/excavation-earthworks.html): Site clearing, levelling, trenching, cut and fill, driveways and retaining. Our own diggers, our own operators.
+- [Underfloor heating](https://northland-plumbing-gas-drainage-demo.vercel.app/services/underfloor-heating.html): Hot water floor heating designed into your new build and warming the whole home from the ground up.
+- [Commercial plumbing & gas](https://northland-plumbing-gas-drainage-demo.vercel.app/services/commercial-plumbing.html): Shops, schools, kitchens and civic buildings. Designed, installed, certified and maintained with minimal downtime.
+- [Repairs & maintenance](https://northland-plumbing-gas-drainage-demo.vercel.app/services/repairs-maintenance.html): Leaks, no hot water, gas faults and scheduled servicing. Fast, fair-priced and done properly.
+- [Water delivery](https://northland-plumbing-gas-drainage-demo.vercel.app/services/water-delivery.html): Up to 10,000 litres of drinking water per load, from a Taumata Arowai registered water carrier.

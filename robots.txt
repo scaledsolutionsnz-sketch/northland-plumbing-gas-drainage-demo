@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://northland-plumbing-gas-drainage-demo.vercel.app/sitemap.xml
