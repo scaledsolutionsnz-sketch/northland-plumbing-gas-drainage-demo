@@ -7,7 +7,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 IMG = ROOT / "img"
-SITE_URL = "https://northland-plumbing-gas-drainage-demo.vercel.app"
+SITE_URL = "https://northland-plumbing-gas-drainage-dem.vercel.app"
 LOGO_INNER = (Path(__file__).parent / "logo-inner.txt").read_text()
 
 NAME = "Northland Plumbing, Gas & Drainage"
