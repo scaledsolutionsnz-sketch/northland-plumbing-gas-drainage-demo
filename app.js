@@ -30,6 +30,37 @@ onScroll();
   }catch(e){}
 })();
 
+// "Where we work" map: Northland only, a pin per place, their base highlighted
+(function(){
+  var el=document.getElementById('areaMap');if(!el||!window.L)return;
+  var places=JSON.parse(el.getAttribute('data-places')),hq=JSON.parse(el.getAttribute('data-hq'));
+  var northland=L.latLngBounds([-36.42,172.62],[-34.40,174.92]);
+  var map=L.map(el,{scrollWheelZoom:false,dragging:!L.Browser.mobile,zoomSnap:.25,minZoom:7,maxBounds:northland.pad(.35),maxBoundsViscosity:.8});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:14,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(map);
+  map.attributionControl.setPrefix(false);
+  map.fitBounds(northland,{padding:[8,8]});
+  // label sides chosen so nearby names don't collide at the regional zoom
+  var side={'Hikurangi':'top','Ruakākā':'right','Waipū':'left','Dargaville':'left','Bay of Islands':'right','Kaipara':'bottom','Far North':'right'};
+  var markers={};
+  places.forEach(function(p){
+    var m=L.marker([p.lat,p.lng],{icon:L.divIcon({className:'',html:'<span class="pin'+(p.sub?' sub':'')+'"></span>',iconSize:[16,16],iconAnchor:[8,8]}),keyboard:false,title:p.n}).addTo(map);
+    m.bindTooltip(p.n,{permanent:!p.sub,direction:side[p.n]||'right',offset:[0,0],className:'town-label'});
+    markers[p.n]=m;
+  });
+  var h=L.marker([hq.lat,hq.lng],{icon:L.divIcon({className:'',html:'<span class="hq-pin">HQ</span>',iconSize:[38,38],iconAnchor:[19,19]}),zIndexOffset:1000,title:'Our base'}).addTo(map);
+  h.bindTooltip('Whangārei &middot; our base',{permanent:true,direction:'left',offset:[-16,0],className:'town-label hq-label'});
+  markers['Whangārei']=h;
+  document.querySelectorAll('[data-town]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var m=markers[b.getAttribute('data-town')];if(!m)return;
+      document.querySelectorAll('[data-town]').forEach(function(x){x.classList.toggle('on',x===b);});
+      if(window.innerWidth<861)el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});
+      map.flyTo(m.getLatLng(),11,{duration:reduce?0:1.1});
+      setTimeout(function(){m.openTooltip();},reduce?0:1150);
+    });
+  });
+})();
+
 // Count-up
 function fmt(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');}
 function countUp(el){

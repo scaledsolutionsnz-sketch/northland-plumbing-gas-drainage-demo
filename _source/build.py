@@ -228,6 +228,16 @@ HOME_FAQ = [
     ("What are your hours?", "Our office is open Monday to Friday, 8am to 4.30pm. Call 0800 WANT GAS to book a job, or 0800 WANT H2O for water delivery."),
 ]
 
+# Places on the "Where we work" map. sub=True: close to Whangārei, so dot only with the label on hover/tap.
+AREAS = [
+    ("Whangārei", -35.7251, 174.3237, True), ("Kamo", -35.6790, 174.3040, True), ("Tikipunga", -35.6960, 174.3360, True),
+    ("Onerahi", -35.7690, 174.3640, True), ("Maunu", -35.7400, 174.2790, True), ("Parua Bay", -35.7720, 174.4560, True),
+    ("Whangārei Heads", -35.8260, 174.5130, True), ("Maungatapere", -35.7530, 174.2010, True), ("Hikurangi", -35.5970, 174.2870, False),
+    ("Ruakākā", -35.9070, 174.4500, False), ("Waipū", -35.9850, 174.4430, False), ("Dargaville", -35.9420, 173.8710, False),
+    ("Bay of Islands", -35.2830, 174.0910, False), ("Kaipara", -36.1110, 174.0610, False), ("Far North", -35.1150, 173.2630, False),
+]
+HQ = (-35.7273589, 174.3290948)
+
 GALLERY = [
     ("drain-trench", "Drainage trench, rural Northland"),
     ("hero-hot-water-install", "Hot water system install"),
@@ -411,6 +421,10 @@ def home():
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": qn, "acceptedAnswer": {"@type": "Answer", "text": html.unescape(re.sub("<[^>]+>", "", a))}} for qn, a in HOME_FAQ]}
     ld = ('<script type="application/ld+json">' + json.dumps(LD_BUSINESS, ensure_ascii=False) + '</script>\n'
           '<script type="application/ld+json">' + json.dumps(faq_ld, ensure_ascii=False) + '</script>\n')
+    towns_html = "".join(f'<li><button type="button" data-town="{e(n)}">{e(n)}</button></li>' for n, _, _, _ in AREAS)
+    areas_json = e(json.dumps([{"n": n, "lat": la, "lng": lo, "sub": sub} for n, la, lo, sub in AREAS], ensure_ascii=False))
+    hq_json = e(json.dumps({"lat": HQ[0], "lng": HQ[1]}))
+    ld += '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">\n'
     out = head("Northland Plumbing, Gas & Drainage | Plumbers, Gasfitters & Drainlayers, Whangārei",
                "Whangārei plumbers, gasfitters and certified drainlayers with our own diggers and water tankers. Plumbing, gas, hot water, wastewater, earthworks and water delivery across Northland. Call 0800 WANT GAS.",
                "", extra_ld=ld)
@@ -669,14 +683,19 @@ def home():
     <div>
       <span class="eyebrow reveal">Where we work</span>
       <h2 class="reveal">Right across Northland</h2>
-      <p class="muted reveal">Based on Lower Dent Street in Whangārei, with vans, diggers and tankers on the road every day. Water delivery runs in set zones around Whangārei and Dargaville.</p>
-      <a class="btn btn-dark reveal" href="{GAS_TEL}">{ic('phone')}Check we cover you</a>
+      <p class="muted reveal">Based on Lower Dent Street in Whangārei, with vans, diggers and tankers on the road every day. Water delivery runs in set zones around Whangārei and Dargaville. Tap a place to find it on the map.</p>
+      <ul class="towns">
+        {towns_html}
+      </ul>
+      <a class="btn btn-dark" href="{GAS_TEL}">{ic('phone')}Check we cover you</a>
     </div>
-    <ul class="towns reveal">
-      <li>Whangārei</li><li>Kamo</li><li>Tikipunga</li><li>Onerahi</li><li>Maunu</li><li>Whangārei Heads</li><li>Parua Bay</li><li>Maungatapere</li><li>Hikurangi</li><li>Ruakākā</li><li>Waipū</li><li>Dargaville</li><li>Bay of Islands</li><li>Kaipara</li><li>Far North</li>
-    </ul>
+    <div class="area-map-wrap">
+      <div id="areaMap" class="area-map" role="region" aria-label="Map of the places we work in Northland" data-places='{areas_json}' data-hq='{hq_json}'></div>
+      <p class="map-key"><span class="k-hq"></span>Our base, 140 Lower Dent Street <span class="k-pin"></span>Where we work</p>
+    </div>
   </div>
 </section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 
 {contact_section("")}
 {map_section()}
@@ -773,16 +792,24 @@ def service_page(s):
 def legal(title, slug, sections):
     out = head(f"{title} | {NAME}", f"{title} for the {NAME} website.", slug)
     out += ribbon("") + nav("", sub=True, solid=True)
-    body = "".join(f"<h2>{h}</h2>" + "".join(f"<p>{x}</p>" for x in ps) for h, ps in sections)
+    body = "".join(f"<h2>{h}</h2>" + "".join(x if x.startswith("<ul") else f"<p>{x}</p>" for x in ps) for h, ps in sections)
     out += f'<main id="main"><section class="legal band-light"><div class="wrap"><span class="eyebrow">{NAME}</span><h1>{title}</h1>{body}</div></section></main>\n'
     out += footer("")
     return out
 
+# Their own privacy policy from northlandpg.co.nz/privacy/, only changed where this site differs (no contact form).
 PRIVACY = [
-    ("What we collect", ["When you call, email or message us, we collect the details you give us, such as your name, phone number, email, the job address and what you need done."]),
-    ("How we use it", ["We use your details to quote, book and complete your job, to issue invoices and compliance certificates, and to contact you about your work. We do not sell your information."]),
-    ("This website", ["This site has no forms and does not set advertising cookies. The embedded Google Map and Google Fonts are provided by Google and are covered by Google's privacy policy."]),
-    ("Your rights", [f"Under the Privacy Act 2020 you can ask to see or correct the personal information we hold about you. Email {EMAIL_TEXT} or call {ADMIN_TXT}."]),
+    ("Our commitment", [f"Thank you for visiting our website. We are committed to protecting your right to privacy. If you have any questions or concerns about this privacy policy, please contact us at {EMAIL_TEXT} or <a href=\"{GAS_TEL}\">0800 9268 427</a>."]),
+    ("Personal information collected", ["We collect personal information that you voluntarily provide to us when you call, email or message us. The personal information that we collect may include the following:",
+        "<ul><li>Name</li><li>Email address</li><li>Phone number</li><li>Address</li></ul>",
+        "We collect this information in order to respond to your enquiry and carry out your job."]),
+    ("Information automatically collected", ["<strong>In short:</strong> some information, such as your Internet Protocol (IP) address and/or browser and device characteristics, is collected automatically when you visit our website.",
+        "We automatically collect certain information when you visit, use or navigate the website. This information does not reveal your specific identity (like your name or contact information) but may include device and usage information, such as your IP address, browser and device characteristics, operating system, language preferences, referring URLs, device name, country, location, information about how and when you use our website and other technical information.",
+        "This information is primarily needed to maintain the security and operation of our website, and for our internal analytics and reporting purposes. Like many businesses, we also collect information through cookies and similar technologies. The information we collect includes:",
+        "<ul><li><strong>Log and usage data:</strong> service-related, diagnostic, usage and performance information our servers automatically collect when you access or use our website and record in log files. Depending on how you interact with us, this may include your IP address, device information, browser type and settings and information about your activity on the website (such as the date and time of your visit, pages and files viewed, searches and other actions you take), device event information (such as system activity, error reports and hardware settings).</li><li><strong>Device data:</strong> information about the computer, phone, tablet or other device you use to access the website. Depending on the device used, this may include your IP address (or proxy server), device and application identification numbers, location, browser type, hardware model, internet service provider and/or mobile carrier, operating system and system configuration information.</li><li><strong>Location data:</strong> information about your device's location, which can be either precise or imprecise. How much information we collect depends on the type and settings of the device you use. You can opt out by refusing access to the information or by disabling the location setting on your device.</li></ul>"]),
+    ("Embedded content from other websites", ["This website includes embedded content from other websites, such as Google Maps and map tiles from OpenStreetMap. Embedded content from other websites behaves in the exact same way as if the visitor has visited the other website.",
+        "These websites may collect data about you, use cookies, embed additional third-party tracking, and monitor your interaction with that embedded content, including tracking your interaction with the embedded content if you have an account and are logged in to that website."]),
+    ("How can you review, update, or delete data that we collect from you?", [f"To request, review, update, or delete your personal information, please contact us at {EMAIL_TEXT} or <a href=\"{GAS_TEL}\">0800 9268 427</a>."]),
 ]
 TERMS = [
     ("About this site", [f"This website is operated by {NAME}, {ADDRESS}. Information on this site is general and may change without notice."]),
