@@ -17,17 +17,18 @@ function onScroll(){
 window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(onScroll);ticking=true;}},{passive:true});
 onScroll();
 
-// Hero Ken Burns crossfade
-var slides=document.querySelectorAll('#heroSlides img'),dots=document.querySelectorAll('#dots span'),cur=0;
-if(!reduce&&slides.length>1){
-  setInterval(function(){
-    slides[cur].classList.remove('active');if(dots[cur])dots[cur].classList.remove('on');
-    cur=(cur+1)%slides.length;
-    if(slides[cur].loading==='lazy')slides[cur].loading='eager';
-    void slides[cur].offsetWidth;
-    slides[cur].classList.add('active');if(dots[cur])dots[cur].classList.add('on');
-  },6000);
-}
+// Open now badge from their real hours (Mon to Fri 8am to 4.30pm, NZ time)
+(function(){
+  var badges=document.querySelectorAll('[data-open-badge]');if(!badges.length)return;
+  try{
+    var parts=new Intl.DateTimeFormat('en-NZ',{timeZone:'Pacific/Auckland',weekday:'short',hour:'numeric',minute:'numeric',hour12:false}).formatToParts(new Date());
+    var get=function(t){var p=parts.find(function(x){return x.type===t;});return p?p.value:'';};
+    var day=get('weekday'),mins=(+get('hour')%24)*60+(+get('minute'));
+    var weekday=['Mon','Tue','Wed','Thu','Fri'].indexOf(day)>-1,open=weekday&&mins>=480&&mins<990;
+    var text=open?'Open now':(weekday&&mins<480?'Opens 8am today':(day==='Fri'||day==='Sat'||day==='Sun'?'Opens Monday 8am':'Opens 8am tomorrow'));
+    badges.forEach(function(b){b.textContent=text;b.classList.toggle('is-open',open);b.hidden=false;});
+  }catch(e){}
+})();
 
 // Count-up
 function fmt(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');}
@@ -40,7 +41,8 @@ function countUp(el){
 }
 
 // Scroll reveals, staggered within each parent
-var targets=document.querySelectorAll('.reveal,.wipe,.wipe-up');
+document.querySelectorAll('.reveal').forEach(function(el){if(el.querySelector('img'))el.classList.remove('reveal');});
+var targets=document.querySelectorAll('.reveal');
 if('IntersectionObserver' in window&&!reduce){
   var io=new IntersectionObserver(function(entries){
     entries.forEach(function(e){

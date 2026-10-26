@@ -43,7 +43,7 @@ def pic(name, alt, sizes="100vw", cls="", eager=False, hero=False, extra="", pre
     srcset = [f"{prefix}img/{name}-1080.webp 1080w", f"{prefix}img/{name}-1920.webp 1920w"]
     if hero:
         srcset.append(f"{prefix}img/{name}-3840.webp 3840w")
-    load = 'fetchpriority="high"' if eager else 'loading="lazy" decoding="async"'
+    load = 'fetchpriority="high"' if eager else 'decoding="async"'
     c = f' class="{cls}"' if cls else ""
     return (f'<img{c} src="{prefix}img/{name}-1920.webp" srcset="{", ".join(srcset)}" sizes="{sizes}" '
             f'alt="{e(alt)}" width="{w}" height="{h}" {load}{extra}>')
@@ -316,7 +316,7 @@ def contact_section(prefix, heading="Got a job? Let's talk.", sub="Call for a qu
         <li>{ic('headset')}<div><a href="{ADMIN_TEL}">{ADMIN_TXT}</a><small>Office and accounts</small></div></li>
         <li>{ic('mail')}<div><a href="{mail}" target="_blank" rel="noopener">{EMAIL_TEXT}</a></div></li>
         <li>{ic('pin')}<div><a href="{MAPS}" target="_blank" rel="noopener">{ADDRESS}</a><small>Postal: PO Box 11011, Te Mai Mail Centre, Whangārei</small></div></li>
-        <li>{ic('clock')}<div>Monday to Friday, 8am to 4.30pm<small>Weekends closed</small></div></li>
+        <li>{ic('clock')}<div>Monday to Friday, 8am to 4.30pm <span class="open-badge" data-open-badge hidden></span><small>Weekends closed</small></div></li>
       </ul>
       <div class="socials reveal">
         <a href="{FB}" target="_blank" rel="noopener" aria-label="Northland Plumbing, Gas &amp; Drainage on Facebook">{ic('fb', '')}</a>
@@ -333,7 +333,7 @@ def contact_section(prefix, heading="Got a job? Let's talk.", sub="Call for a qu
 
 def map_section():
     return f"""<section class="map" aria-label="Map">
-  <iframe title="Map to Northland Plumbing, Gas &amp; Drainage, 140 Lower Dent Street, Whangārei" src="{MAP_EMBED}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  <iframe title="Map to Northland Plumbing, Gas &amp; Drainage, 140 Lower Dent Street, Whangārei" src="{MAP_EMBED}" referrerpolicy="no-referrer-when-downgrade"></iframe>
 </section>
 """
 
@@ -347,8 +347,8 @@ def footer(prefix):
         <a href="{prefix}index.html" class="logo" aria-label="Home">{LOGO_SVG}</a>
         <p style="margin-top:18px">Plumbers, gasfitters, drainlayers and earthworks from Whangārei, working right across Northland.</p>
         <div class="badges">
-          <img src="{prefix}img/brands/logo-master-plumbers.png" alt="Master Plumbers member" width="420" height="150" loading="lazy">
-          <img src="{prefix}img/brands/logo-sitewise-gold-2025.png" alt="Sitewise Gold 2025/2026" width="440" height="160" loading="lazy">
+          <img src="{prefix}img/brands/logo-master-plumbers.png" alt="Master Plumbers member" width="420" height="150">
+          <img src="{prefix}img/brands/logo-sitewise-gold-2025.png" alt="Sitewise Gold 2025/2026" width="440" height="160">
         </div>
       </div>
       <div><h4>Services</h4><ul>{svc_links}</ul></div>
@@ -396,16 +396,16 @@ def home():
     tiles = []
     for i, (s, lay) in enumerate(zip(SERVICES, tiles_layout)):
         sizes = "(max-width:600px) 100vw, (max-width:900px) 100vw, 66vw" if lay else "(max-width:600px) 100vw, (max-width:900px) 50vw, 33vw"
-        tiles.append(f'''      <a href="services/{s["slug"]}.html" class="tile {lay} wipe">{pic(s["tile"], s["title"], sizes)}<div class="tile-body"><span class="num">{i+1:02d}</span><h3>{s["title"]}</h3><p>{s["blurb"]}</p><span class="more">Learn more {ic("arrow", "")}</span></div></a>''')
+        tiles.append(f'''      <a href="services/{s["slug"]}.html" class="tile {lay}">{pic(s["tile"], s["title"], sizes)}<div class="tile-body"><span class="num">{i+1:02d}</span><h3>{s["title"]}</h3><p>{s["blurb"]}</p><span class="more">Learn more {ic("arrow", "")}</span></div></a>''')
     reviews = []
     for n, yr, job, txt in REVIEWS:
         reviews.append(f'''      <figure class="review reveal"><div class="review-top">{STARS5}<svg class="g" viewBox="0 0 48 48" aria-label="Google review"><use href="#i-g"/></svg></div><blockquote>“{e(txt)}”</blockquote><footer><div><strong>{e(n)}</strong>{job} &middot; {yr}</div></footer></figure>''')
-    gallery = "\n".join(f'''      <figure class="wipe-up">{pic(n, c, "(max-width:520px) 100vw, (max-width:900px) 50vw, 33vw", extra=f' data-full="img/{n}-1920.webp"')}<figcaption>{c}</figcaption></figure>''' for n, c in GALLERY)
+    gallery = "\n".join(f'''      <figure >{pic(n, c, "(max-width:520px) 100vw, (max-width:900px) 50vw, 33vw", extra=f' data-full="img/{n}-1920.webp"')}<figcaption>{c}</figcaption></figure>''' for n, c in GALLERY)
     brands = ["rheem.svg", "rockgas-north.png", "plumbing-world.png", "waterflow.png", "obriens.png", "duracrete.png", "econo-treat.svg", "naturalflow.svg", "e-one.png", "aquatec.png", "ecodan.png", "black-diamond.png"]
     names = {"rheem.svg": "Rheem", "rockgas-north.png": "Rockgas North", "plumbing-world.png": "Plumbing World", "waterflow.png": "Water Flow NZ", "obriens.png": "O'Briens Plumbing and Bathroomware", "duracrete.png": "Duracrete", "econo-treat.svg": "Econo-Treat", "naturalflow.svg": "NaturalFlow", "e-one.png": "E/One", "aquatec.png": "Aquatec", "ecodan.png": "Ecodan", "black-diamond.png": "Black Diamond"}
     def brand_ul(hidden):
         hid = ' aria-hidden="true"' if hidden else ""
-        return (f'<ul{hid}>' + "".join(f'<li><img src="img/brands/logo-{b}" alt="{"" if hidden else e(names[b])}" loading="lazy"></li>' for b in brands) + "</ul>")
+        return (f'<ul{hid}>' + "".join(f'<li><img src="img/brands/logo-{b}" alt="{"" if hidden else e(names[b])}"></li>' for b in brands) + "</ul>")
     mail_deal = gmail("Hot water deal enquiry", "Hi team,\n\nI'm interested in the hot water deal:\n\nAddress:\n\nCurrent hot water system:\n\nThanks")
     import re
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": qn, "acceptedAnswer": {"@type": "Answer", "text": html.unescape(re.sub("<[^>]+>", "", a))}} for qn, a in HOME_FAQ]}
@@ -421,34 +421,25 @@ def home():
 
 <!-- HERO -->
 <section class="hero" aria-label="Introduction">
-  <div class="hero-slides" id="heroSlides">
-    {pic("hero-team-aerial", "The Northland Plumbing, Gas & Drainage crew and fleet", "100vw", "active", eager=True, hero=True)}
-    {pic("hero-van-new-build", "Northland Plumbing van outside a new build", "100vw", hero=True)}
-    {pic("hero-excavator", "Our excavator on a drainage job", "100vw", hero=True)}
-    {pic("hero-hot-water-install", "Plumber installing a hot water system", "100vw", hero=True)}
+  <div class="hero-photo">
+    {pic("hero-team-aerial", "The whole Northland Plumbing, Gas & Drainage team lined up in front of the fleet", "100vw", eager=True, hero=True)}
   </div>
   <div class="wrap">
-    <span class="eyebrow hero-fade">Whangārei based &middot; Northland wide</span>
-    <h1>
-      <span class="line"><span>Plumbing, gas</span></span>
-      <span class="line"><span>&amp; drainage for</span></span>
-      <span class="line"><span class="hl">all of Northland</span></span>
-    </h1>
-    <div class="hero-bottom hero-fade">
-      <div>
-        <p class="lead">Qualified plumbers, gasfitters and certified drainlayers with our own diggers and water tankers. One local crew, from the first trench to the final fit-off.</p>
-        <div class="hero-ctas">
-          <a class="btn btn-primary" href="{GAS_TEL}">{ic('phone')}Call {GAS_TXT}</a>
-          <a class="btn btn-ghost" href="#contact">Get a quote {ic('arrow')}</a>
-        </div>
-      </div>
-      <div class="ratings">
+    <div class="hero-copy">
+      <div class="hero-top hero-fade"><span class="eyebrow">Whangārei based &middot; Northland wide</span><span class="open-badge" data-open-badge hidden></span></div>
+      <h1>
+        <span class="line"><span>Plumbing, gas &amp; drainage</span></span>
+        <span class="line"><span class="hl">for all of Northland</span></span>
+      </h1>
+      <p class="lead hero-fade">Qualified plumbers, gasfitters and certified drainlayers with our own diggers and water tankers. One local crew, from the first trench to the final fit-off.</p>
+      <div class="hero-ctas hero-fade">
+        <a class="btn btn-primary" href="{GAS_TEL}">{ic('phone')}Call {GAS_TXT}</a>
+        <a class="btn btn-ghost" href="#contact">Get a quote {ic('arrow')}</a>
         <a class="rating" href="{G_REVIEWS}" target="_blank" rel="noopener" aria-label="Rated 4.5 out of 5 from 77 Google reviews">
           {G}<span class="num">4.5</span><div>{STARS45}<small>77 Google reviews</small></div>
         </a>
       </div>
     </div>
-    <div class="slide-dots hero-fade" id="dots" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span></div>
   </div>
 </section>
 
@@ -472,6 +463,21 @@ def home():
     <div class="tiles">
 {chr(10).join(tiles)}
     </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="band-light how">
+  <div class="wrap">
+    <div class="section-head">
+      <div><span class="eyebrow reveal">How it works</span><h2 class="reveal">Three steps. No runaround.</h2></div>
+      <p class="muted reveal">One phone call gets the right people on the job, whether it's a dripping tap or a full new-build fit-out.</p>
+    </div>
+    <ol class="steps">
+      <li class="reveal"><span class="step-n">01</span>{ic('phone')}<h3>Call or email us</h3><p>Ring {GAS_TXT} or email the job details. Building or renovating? Talk to us at the planning stage.</p></li>
+      <li class="reveal"><span class="step-n">02</span>{ic('award')}<h3>Clear advice and pricing</h3><p>We look at the job and give you honest, down to earth advice with no hidden costs.</p></li>
+      <li class="reveal"><span class="step-n">03</span>{ic('check')}<h3>One crew does it all</h3><p>Digging, drainage, plumbing and gas by one team, then certified and signed off.</p></li>
+    </ol>
   </div>
 </section>
 
@@ -519,7 +525,7 @@ def home():
 <!-- ABOUT -->
 <section id="about" class="band-light">
   <div class="wrap split">
-    <div class="split-img wipe-up">
+    <div class="split-img">
       {pic("greeting-customer", "Northland Plumbing plumber greeting a customer at the door", "(max-width:900px) 100vw, 50vw")}
       <div class="corner-tag">32+ years<br>combined</div>
       <div class="inset">{pic("team-in-van", "The team in a Northland Plumbing van", "(max-width:900px) 40vw, 22vw")}</div>
@@ -570,9 +576,9 @@ def home():
         </div>
       </div>
       <div class="water-photos">
-        <figure class="wipe-up">{pic("water-truck-pool", "Water tanker filling a swimming pool, from above", "(max-width:960px) 60vw, 33vw")}</figure>
-        <figure class="wipe-up">{pic("water-truck-filling", "Water tanker being filled at the pump station", "(max-width:960px) 40vw, 22vw")}</figure>
-        <figure class="wipe-up">{pic("water-truck-shed", "The 0800 WANT H2O water tanker", "(max-width:960px) 40vw, 22vw")}</figure>
+        <figure >{pic("water-truck-pool", "Water tanker filling a swimming pool, from above", "(max-width:960px) 60vw, 33vw")}</figure>
+        <figure >{pic("water-truck-filling", "Water tanker being filled at the pump station", "(max-width:960px) 40vw, 22vw")}</figure>
+        <figure >{pic("water-truck-shed", "The 0800 WANT H2O water tanker", "(max-width:960px) 40vw, 22vw")}</figure>
       </div>
     </div>
   </div>
@@ -605,7 +611,7 @@ def home():
       <div><span class="eyebrow reveal">The crew</span><h2 class="reveal">Locals who answer the phone</h2></div>
       <p class="muted reveal">A full team of plumbers, gasfitters, drainlayers and operators, with a fleet of vans, diggers and tankers based on Lower Dent Street.</p>
     </div>
-    <figure class="team-photo wipe-up">{pic("hero-team-aerial", "The whole Northland Plumbing, Gas & Drainage team with the fleet", "100vw")}<figcaption>The Northland PG team and fleet</figcaption></figure>
+    <figure class="team-photo">{pic("building-frontage", "The Northland Plumbing, Gas & Drainage base on Lower Dent Street, Whangārei", "100vw")}<figcaption>Our base, 140 Lower Dent Street</figcaption></figure>
     <div class="team-grid">
       <div class="team-card reveal"><div class="mark">{ic('hat', '')}</div><span class="role">Co-owner</span><h3>Hamish Smith</h3><p>Founded Titan Gas &amp; Plumbing before the merger. Customers mention him by name for picking up the phone.</p></div>
       <div class="team-card reveal"><div class="mark">{ic('flame', '')}</div><span class="role">Co-owner</span><h3>Duncan Jones</h3><p>Founded Hooked Up Plumbing &amp; Gas before the merger that formed Northland PG.</p></div>
@@ -657,6 +663,21 @@ def home():
   </div>
 </section>
 
+<!-- AREAS -->
+<section id="areas" class="band-light areas">
+  <div class="wrap areas-grid">
+    <div>
+      <span class="eyebrow reveal">Where we work</span>
+      <h2 class="reveal">Right across Northland</h2>
+      <p class="muted reveal">Based on Lower Dent Street in Whangārei, with vans, diggers and tankers on the road every day. Water delivery runs in set zones around Whangārei and Dargaville.</p>
+      <a class="btn btn-dark reveal" href="{GAS_TEL}">{ic('phone')}Check we cover you</a>
+    </div>
+    <ul class="towns reveal">
+      <li>Whangārei</li><li>Kamo</li><li>Tikipunga</li><li>Onerahi</li><li>Maunu</li><li>Whangārei Heads</li><li>Parua Bay</li><li>Maungatapere</li><li>Hikurangi</li><li>Ruakākā</li><li>Waipū</li><li>Dargaville</li><li>Bay of Islands</li><li>Kaipara</li><li>Far North</li>
+    </ul>
+  </div>
+</section>
+
 {contact_section("")}
 {map_section()}
 </main>
@@ -677,12 +698,12 @@ def service_page(s):
     photos = "".join(ppic(n, f'{s["title"]} work by Northland Plumbing, Gas & Drainage', "(max-width:600px) 50vw, 33vw") for n in s["photos"])
     brands = ""
     if s.get("brands"):
-        brands = '<div class="brand-cards">' + "".join(f'<div class="brand-card reveal"><img src="{p}img/brands/logo-{f}" alt="{e(t)} logo" loading="lazy"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for f, t, d in s["brands"]) + "</div>"
+        brands = '<div class="brand-cards">' + "".join(f'<div class="brand-card reveal"><img src="{p}img/brands/logo-{f}" alt="{e(t)} logo"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for f, t, d in s["brands"]) + "</div>"
     zones = ""
     if s["slug"] == "water-delivery":
         zones = f'''<div class="zones">
-        <div class="zone reveal"><h3>Whangārei delivery zones</h3><img src="{p}img/map-whangarei-zones.jpg" alt="Map of water delivery zones within the Whangārei district" width="1087" height="1006" loading="lazy" data-img-role="small"></div>
-        <div class="zone reveal"><h3>Dargaville delivery zones</h3><img src="{p}img/map-dargaville-zones.jpg" alt="Map of water delivery zones around Dargaville" width="1400" height="1281" loading="lazy" data-img-role="small"></div>
+        <div class="zone reveal"><h3>Whangārei delivery zones</h3><img src="{p}img/map-whangarei-zones.jpg" alt="Map of water delivery zones within the Whangārei district" width="1087" height="1006" data-img-role="small"></div>
+        <div class="zone reveal"><h3>Dargaville delivery zones</h3><img src="{p}img/map-dargaville-zones.jpg" alt="Map of water delivery zones around Dargaville" width="1400" height="1281" data-img-role="small"></div>
       </div>'''
     tel, tel_txt = (H2O_TEL, H2O_TXT) if s["slug"] == "water-delivery" else (GAS_TEL, GAS_TXT)
     mail = gmail(f'{s["title"]} enquiry', f"Hi Northland Plumbing, Gas & Drainage,\n\nI'd like a quote for {s['title'].lower()}:\n\nAddress:\n\nThanks")
